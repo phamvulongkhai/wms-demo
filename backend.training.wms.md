@@ -1,8 +1,8 @@
 ## Backend Training
 
-1. Nghiên cứu về OOP, so sánh chúng
+1. Nghiên cứu về OOP, so sánh chúng (Compare 4 types)
 
-2. Nghiên cứu về SOLID, so sánh chúng
+2. Nghiên cứu về SOLID, so sánh chúng (Compare S, O, L, I, D)
 
 3. Nghiên cứu về Typescript
 
@@ -38,12 +38,12 @@
 
     - Cho phép add user vào hệ thống
     - Cho phép user đăng nhập hệ thống
-    - Nâng cao: xử lý authentication với jwt
+    - Nâng cao: xử lý authentication với jwt (No need to do authorization)
 
   - Item
 
     - Cho phép user create, read, update sản phẩm
-    - Cho phép user delete sản phẩm nếu sản phẩm đó chưa được lên đơn hàng nào
+    - Cho phép user delete sản phẩm nếu sản phẩm đó chưa được lên đơn hàng nào (In complete and new status)
     - Cho phép user list sản phẩm
     - Nâng cao: search sản phẩm theo sku, name
     - Nâng cao: hiển thị tồn kho và tồn kho khả dụng của sản phẩm. Công thức sẽ ở bên dưới
@@ -66,8 +66,8 @@
 
 - Công thức tính tồn kho: Sẽ dựa vào số lượng sản phẩm được thêm vào các đơn hàng
 
-  - Tồn kho sản phẩm = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED + tổng đơn nhập NEW
-  - Tồn kho khả dụng sản phẩm = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED - tổng đơn xuất NEW
+  - Tồn kho sản phẩm (Quantity) = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED + tổng đơn nhập NEW
+  - Tồn kho khả dụng sản phẩm (Quantity) = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED - tổng đơn xuất NEW
 
 - Yêu cầu về code
 
