@@ -10,10 +10,14 @@ export class Item {
   @Prop()
   name: string;
 
-  @Prop()
+  @Prop({
+    default: 0,
+  })
   inventory: number;
 
-  @Prop()
+  @Prop({
+    default: 0,
+  })
   availableInventory: number;
 }
 
