@@ -109,4 +109,3 @@
   - In the interceptor, we can do any processes and modify the request before it’s sent to the server
   - We can mutate the response after it has passed through the route handler
   - Tức là có thể trực tiếp truy cập, sửa đổi vào request trước khi nó đến router, và response.
-    ![Alt text](photo_2023-12-18_01-45-14.jpg)
