@@ -33,3 +33,6 @@ interface D extends B, C {
 class Constractor implements B {
   b(): void {}
 }
+
+// class extends class, class implement interface, interface extends interface
+// class can implements multiple interface but only one class
