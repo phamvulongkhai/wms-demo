@@ -54,5 +54,6 @@
     "trạng",
     "tuần",
     "xuất"
-  ]
+  ],
+  "git.ignoreLimitWarning": true
 }
