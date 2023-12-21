@@ -9,7 +9,6 @@ async function bootstrap() {
     .setTitle('WMS-demo')
     .setDescription('The WMS API description')
     .setVersion('1.0')
-    .addTag('wms')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

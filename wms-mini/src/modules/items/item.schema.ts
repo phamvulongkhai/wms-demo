@@ -9,6 +9,12 @@ export class Item {
 
   @Prop()
   name: string;
+
+  @Prop()
+  inventory: number;
+
+  @Prop()
+  availableInventory: number;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);
