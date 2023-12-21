@@ -1,4 +1,7 @@
 {
+  "files.exclude": {
+    "**/*.spec.ts": true
+  },
   "cSpell.ignorePaths": ["**/questionOne2Six/**", "/plan.md"],
   "cSpell.words": [
     "biệt",

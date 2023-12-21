@@ -29,8 +29,8 @@
 
   - User: người dùng hệ thống
   - Item: thông tin các sản phẩm cần quản lý
-  - Inbound Order: đơn hàng nhập kho, sẽ có 2 status là NEW, CANCEL và COMPLETED
-  - Outbound Order: đơn hàng xuất kho, sẽ có 2 status là NEW, CANCEL và COMPLETED
+  - Inbound Order: đơn hàng nhập kho, sẽ có 3 status là NEW, CANCEL và COMPLETED
+  - Outbound Order: đơn hàng xuất kho, sẽ có 3 status là NEW, CANCEL và COMPLETED
 
 - Yêu cầu tính năng
 
@@ -42,10 +42,11 @@
 
   - Item
 
+    - schema: id, sku, name.
     - Cho phép user create, read, update sản phẩm
-    - Cho phép user delete sản phẩm nếu sản phẩm đó chưa được lên đơn hàng nào (In complete and new status)
+    - Cho phép user delete sản phẩm nếu sản phẩm đó chưa được lên đơn hàng nào
     - Cho phép user list sản phẩm
-    - Nâng cao: search sản phẩm theo sku, name
+    - Nâng cao: search sản phẩm theo sku (unique), name
     - Nâng cao: hiển thị tồn kho và tồn kho khả dụng của sản phẩm. Công thức sẽ ở bên dưới
 
   - Inbound Order
