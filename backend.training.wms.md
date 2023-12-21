@@ -29,8 +29,8 @@
 
   - User: người dùng hệ thống
   - Item: thông tin các sản phẩm cần quản lý
-  - Inbound Order: đơn hàng nhập kho, sẽ có 2 status là NEW và COMPLETED
-  - Outbound Order: đơn hàng xuất kho, sẽ có 2 status là NEW và COMPLETED
+  - Inbound Order: đơn hàng nhập kho, sẽ có 2 status là NEW, CANCEL và COMPLETED
+  - Outbound Order: đơn hàng xuất kho, sẽ có 2 status là NEW, CANCEL và COMPLETED
 
 - Yêu cầu tính năng
 
