@@ -42,9 +42,9 @@ export class ItemsService {
     }
   }
 
-  // TODO: pagination
-
   // TODO: update items
+
+  // TODO: pagination
 
   async softDelete(id: string): Promise<ItemDocument> {
     //  TODO: you need to validate if the item is on order or not.

@@ -24,6 +24,11 @@ export class Inbound {
     default: [],
   })
   items: ItemQuantity[];
+
+  @Prop({
+    default: true,
+  })
+  active: boolean;
 }
 
 export const InboundSchema = SchemaFactory.createForClass(Inbound);

@@ -84,4 +84,14 @@ export class InboundsService {
       throw new BadRequestException('Bad request');
     }
   }
+
+  async softDelete(id: string): Promise<InboundDocument> {
+    try {
+      return this.inboundModel.findByIdAndUpdate(id, {
+        active: false,
+      });
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
 }

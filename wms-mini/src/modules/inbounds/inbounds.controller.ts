@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
@@ -46,5 +46,12 @@ export class InboundsController {
     @Body() updateInbound: UpdateInboundDto,
   ) {
     return this.inboundsService.updateInbound(id, updateInbound);
+  }
+
+  @Delete(':id')
+  async softDelete(
+    @Param('id', new IsObjectIdPipe()) id: string,
+  ): Promise<InboundDocument> {
+    return this.inboundsService.softDelete(id);
   }
 }
