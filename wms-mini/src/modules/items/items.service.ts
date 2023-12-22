@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { Model } from 'mongoose';
+import { options } from 'src/config/plain.config';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { CreateItemDto } from './dto/create.item.dto';
-import { FindingOptionDto } from './dto/finding.option.dto';
+import { FindingOptionItemDto } from './dto/finding.option.item.dto';
 import { Item, ItemDocument } from './item.schema';
-
-const options = {
-  excludeExtraneousValues: true,
-};
 
 @Injectable()
 export class ItemsService {
@@ -31,11 +28,11 @@ export class ItemsService {
   }
 
   async findByOption(
-    findingOptionDto: FindingOptionDto,
-  ): Promise<CreateItemDto[]> {
+    findingOptionItemDto: FindingOptionItemDto,
+  ): Promise<ItemDocument[]> {
     const newFindingOptionDto = plainToInstance(
-      FindingOptionDto,
-      findingOptionDto,
+      FindingOptionItemDto,
+      findingOptionItemDto,
       options,
     );
     try {
@@ -44,6 +41,10 @@ export class ItemsService {
       throw new BadRequestException('Bad request');
     }
   }
+
+  // TODO: pagination
+
+  // TODO: update items
 
   async softDelete(id: string): Promise<ItemDocument> {
     //  TODO: you need to validate if the item is on order or not.

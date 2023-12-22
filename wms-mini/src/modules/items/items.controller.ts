@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateItemDto } from './dto/create.item.dto';
-import { FindingOptionDto } from './dto/finding.option.dto';
+import { FindingOptionDto } from './dto/finding.option.item.dto';
 import { ItemDocument } from './item.schema';
 import { ItemsService } from './items.service';
 @ApiTags('Items')
