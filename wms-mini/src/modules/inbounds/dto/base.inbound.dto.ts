@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
 import { ItemQuantity } from 'src/modules/inbounds/dto/item.quantity.type';
 
-export class CreateInboundDto {
+export class BaseInboundDto {
   @Expose()
   @IsArray()
   @IsNotEmpty()

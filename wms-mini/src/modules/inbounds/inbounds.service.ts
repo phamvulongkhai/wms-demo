@@ -5,7 +5,8 @@ import { Model, UpdateWriteOpResult } from 'mongoose';
 import { options } from 'src/config/plain.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
-import { CreateInboundDto } from './dto/create.inbound.dto';
+import { CreateInboundDto } from './dto/create.update.inbound.dto.ts/create.inbound.dto';
+import { UpdateInboundDto } from './dto/create.update.inbound.dto.ts/update.inbound.dto';
 import { FindingOptionInboundDto } from './dto/finding.option.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
 import { Inbound, InboundDocument } from './inbound.schema';
@@ -33,11 +34,16 @@ export class InboundsService {
     id: string,
     updateStatusInboundDto: UpdateStatusInboundDto,
   ): Promise<UpdateWriteOpResult> {
-    const status: string = updateStatusInboundDto.status;
-    if (status !== Status.New)
-      throw new BadRequestException('Only NEW accepted');
+    const statusChange: string = updateStatusInboundDto.status;
     try {
-      return await this.inboundModel.updateOne({ _id: id }, { status: status });
+      const inbound = await this.inboundModel.findById(id);
+      if (inbound.status !== Status.New) {
+        throw new BadRequestException('Only new accepted');
+      }
+      return await this.inboundModel.findByIdAndUpdate(
+        { _id: id },
+        { status: statusChange },
+      );
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
@@ -53,6 +59,27 @@ export class InboundsService {
     );
     try {
       return await this.inboundModel.find(newFindingOptionInboundDto).exec();
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
+  async updateInbound(
+    id: string,
+    updateInboundDto: UpdateInboundDto,
+  ): Promise<InboundDocument> {
+    const newUpdateInboundDto = plainToInstance(
+      UpdateInboundDto,
+      updateInboundDto,
+      options,
+    );
+    try {
+      return this.inboundModel.findByIdAndUpdate(
+        { _id: id },
+        {
+          items: newUpdateInboundDto,
+        },
+      );
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
