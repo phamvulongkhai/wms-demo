@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
-import { CreateItemDto } from './dto/create.item.dto';
+import { CreateItemDto } from './dto/create.update.item.dto.ts/create.item.dto';
+import { UpdateItemDto } from './dto/create.update.item.dto.ts/update.item.dto';
 import { FindingOptionItemDto } from './dto/finding.option.item.dto';
 import { ItemDocument } from './item.schema';
 import { ItemsService } from './items.service';
@@ -20,6 +21,14 @@ export class ItemsController {
     @Body() findingOptionItemDto: FindingOptionItemDto,
   ): Promise<ItemDocument[]> {
     return this.itemsService.findByOption(findingOptionItemDto);
+  }
+
+  @Put('update/:id')
+  async updateItem(
+    @Param('id', new IsObjectIdPipe()) id: string,
+    @Body() updateItem: UpdateItemDto,
+  ) {
+    return this.itemsService.updateInbound(id, updateItem);
   }
 
   @Delete(':id')

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { Model, UpdateWriteOpResult } from 'mongoose';
+import activeOption from 'src/config/active.config';
 import { options } from 'src/config/plain.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
@@ -40,8 +41,8 @@ export class InboundsService {
       if (inbound.status !== Status.New) {
         throw new BadRequestException('Only new accepted');
       }
-      return await this.inboundModel.findByIdAndUpdate(
-        { _id: id },
+      return await this.inboundModel.findOneAndUpdate(
+        { _id: id, active: activeOption },
         { status: statusChange },
       );
     } catch (error) {
@@ -58,7 +59,12 @@ export class InboundsService {
       options,
     );
     try {
-      return await this.inboundModel.find(newFindingOptionInboundDto).exec();
+      return await this.inboundModel
+        .find({
+          active: activeOption,
+          ...newFindingOptionInboundDto,
+        })
+        .exec();
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
@@ -74,8 +80,8 @@ export class InboundsService {
       options,
     );
     try {
-      return this.inboundModel.findByIdAndUpdate(
-        { _id: id },
+      return this.inboundModel.findOneAndUpdate(
+        { _id: id, active: activeOption },
         {
           items: newUpdateInboundDto,
         },

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
-export class CreateItemDto {
+export class BaseItemDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
