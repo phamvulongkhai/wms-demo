@@ -6,7 +6,9 @@ export type ItemDocument = HydratedDocument<Item>;
   timestamps: true,
 })
 export class Item {
-  @Prop()
+  @Prop({
+    unique: true,
+  })
   sku: string;
 
   @Prop()
