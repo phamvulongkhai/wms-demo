@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
+export type ItemDocument = HydratedDocument<Item>;
 @Schema({
   timestamps: true,
 })
@@ -19,6 +21,11 @@ export class Item {
     default: 0,
   })
   availableInventory: number;
+
+  @Prop({
+    default: true,
+  })
+  active: boolean;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

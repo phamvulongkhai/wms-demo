@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { plainToInstance } from 'class-transformer';
 import { Model } from 'mongoose';
+import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { CreateItemDto } from './dto/create.item.dto';
-import { Item } from './item.schema';
+import { FindingOptionDto } from './dto/finding.option.dto';
+import { Item, ItemDocument } from './item.schema';
+
+const options = {
+  excludeExtraneousValues: true,
+};
 
 @Injectable()
 export class ItemsService {
@@ -10,11 +17,42 @@ export class ItemsService {
     @InjectModel(Item.name) private readonly itemModel: Model<Item>,
   ) {}
 
-  async create(createItemDto: CreateItemDto): Promise<CreateItemDto> {
-    return await this.itemModel.create(createItemDto);
+  async create(createItemDto: CreateItemDto): Promise<ItemDocument> {
+    const newCreateItemDto = plainToInstance(
+      CreateItemDto,
+      createItemDto,
+      options,
+    );
+    try {
+      return await this.itemModel.create(newCreateItemDto);
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
   }
 
-  async find(): Promise<CreateItemDto[]> {
-    return await this.itemModel.find().exec();
+  async findByOption(
+    findingOptionDto: FindingOptionDto,
+  ): Promise<CreateItemDto[]> {
+    const newFindingOptionDto = plainToInstance(
+      FindingOptionDto,
+      findingOptionDto,
+      options,
+    );
+    try {
+      return await this.itemModel.find(newFindingOptionDto).exec();
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
+  async softDelete(id: string): Promise<ItemDocument> {
+    //  TODO: you need to validate if the item is on order or not.
+    try {
+      return this.itemModel.findByIdAndUpdate(id, {
+        active: false,
+      });
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
   }
 }
