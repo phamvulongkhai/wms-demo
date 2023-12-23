@@ -13,14 +13,16 @@ export class ItemsController {
 
   @Post('create')
   async create(@Body() createItemDto: CreateItemDto): Promise<ItemDocument> {
-    return this.itemsService.create(createItemDto);
+    return await this.itemsService.create(createItemDto);
   }
+
+  // TODO: pagination
 
   @Post('search')
   async findByOption(
     @Body() findingOptionItemDto: FindingOptionItemDto,
   ): Promise<ItemDocument[]> {
-    return this.itemsService.findByOption(findingOptionItemDto);
+    return await this.itemsService.findByOption(findingOptionItemDto);
   }
 
   @Put('update/:id')
@@ -28,13 +30,14 @@ export class ItemsController {
     @Param('id', new IsObjectIdPipe()) id: string,
     @Body() updateItem: UpdateItemDto,
   ) {
-    return this.itemsService.updateInbound(id, updateItem);
+    return await this.itemsService.updateInbound(id, updateItem);
   }
 
+  // TODO: you cannot delete item if items exist in any order.
   @Delete(':id')
   async softDelete(
     @Param('id', new IsObjectIdPipe()) id: string,
   ): Promise<ItemDocument> {
-    return this.itemsService.softDelete(id);
+    return await this.itemsService.softDelete(id);
   }
 }

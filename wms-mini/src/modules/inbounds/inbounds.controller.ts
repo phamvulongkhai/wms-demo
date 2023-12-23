@@ -17,18 +17,16 @@ export class InboundsController {
   async create(
     @Body() createInboundDto: CreateInboundDto,
   ): Promise<InboundDocument> {
-    return this.inboundsService.create(createInboundDto);
+    return await this.inboundsService.create(createInboundDto);
   }
 
   // TODO: pagination
-  // TODO: DELETE
-  // TODO: can update if new
 
   @Post('search')
   async findByOption(
     @Body() findingOptionInboundDto: FindingOptionInboundDto,
   ): Promise<InboundDocument[]> {
-    return this.inboundsService.findByOption(findingOptionInboundDto);
+    return await this.inboundsService.findByOption(findingOptionInboundDto);
   }
 
   // ! Only New accepted
@@ -37,7 +35,10 @@ export class InboundsController {
     @Param('id', new IsObjectIdPipe()) id: string,
     @Body() updateStatusInboundDto: UpdateStatusInboundDto,
   ): Promise<UpdateWriteOpResult> {
-    return this.inboundsService.updateInboundStatus(id, updateStatusInboundDto);
+    return await this.inboundsService.updateInboundStatus(
+      id,
+      updateStatusInboundDto,
+    );
   }
 
   @Put('update/:id')
@@ -45,13 +46,13 @@ export class InboundsController {
     @Param('id', new IsObjectIdPipe()) id: string,
     @Body() updateInbound: UpdateInboundDto,
   ) {
-    return this.inboundsService.updateInbound(id, updateInbound);
+    return await this.inboundsService.updateInbound(id, updateInbound);
   }
 
   @Delete(':id')
   async softDelete(
     @Param('id', new IsObjectIdPipe()) id: string,
   ): Promise<InboundDocument> {
-    return this.inboundsService.softDelete(id);
+    return await this.inboundsService.softDelete(id);
   }
 }

@@ -16,11 +16,13 @@ export class Item {
 
   @Prop({
     default: 0,
+    min: 0,
   })
   inventory: number;
 
   @Prop({
     default: 0,
+    min: 0,
   })
   availableInventory: number;
 

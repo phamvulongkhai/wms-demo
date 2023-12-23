@@ -18,8 +18,9 @@ export class InboundsService {
     @InjectModel(Inbound.name) private readonly inboundModel: Model<Inbound>,
   ) {}
 
+  //  TODO: You need to validate item id, and calculate inventory before save
   async create(createInboundDto: CreateInboundDto): Promise<InboundDocument> {
-    const newCreateInboundDto = plainToInstance(
+    const newCreateInboundDto: CreateInboundDto = plainToInstance(
       CreateInboundDto,
       createInboundDto,
       options,
@@ -31,29 +32,10 @@ export class InboundsService {
     }
   }
 
-  async updateInboundStatus(
-    id: string,
-    updateStatusInboundDto: UpdateStatusInboundDto,
-  ): Promise<UpdateWriteOpResult> {
-    const statusChange: string = updateStatusInboundDto.status;
-    try {
-      const inbound = await this.inboundModel.findById(id);
-      if (inbound.status !== Status.New) {
-        throw new BadRequestException('Only new accepted');
-      }
-      return await this.inboundModel.findOneAndUpdate(
-        { _id: id, active: activeOption },
-        { status: statusChange },
-      );
-    } catch (error) {
-      throw new BadRequestException('Bad request');
-    }
-  }
-
   async findByOption(
     findingOptionInboundDto: FindingOptionInboundDto,
   ): Promise<InboundDocument[]> {
-    const newFindingOptionInboundDto = plainToInstance(
+    const newFindingOptionInboundDto: FindingOptionInboundDto = plainToInstance(
       FindingOptionInboundDto,
       findingOptionInboundDto,
       options,
@@ -70,11 +52,31 @@ export class InboundsService {
     }
   }
 
+  async updateInboundStatus(
+    id: string,
+    updateStatusInboundDto: UpdateStatusInboundDto,
+  ): Promise<UpdateWriteOpResult> {
+    const statusChange: string = updateStatusInboundDto.status;
+    try {
+      const statusCheck = await this.findInboundStatus(id);
+      if (statusCheck !== Status.NEW) {
+        throw new BadRequestException('Only new accepted');
+      }
+      return await this.inboundModel.findOneAndUpdate(
+        { _id: id, active: activeOption },
+        { status: statusChange },
+        { new: true },
+      );
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
   async updateInbound(
     id: string,
     updateInboundDto: UpdateInboundDto,
   ): Promise<InboundDocument> {
-    const newUpdateInboundDto = plainToInstance(
+    const newUpdateInboundDto: UpdateInboundDto = plainToInstance(
       UpdateInboundDto,
       updateInboundDto,
       options,
@@ -93,11 +95,27 @@ export class InboundsService {
 
   async softDelete(id: string): Promise<InboundDocument> {
     try {
-      return this.inboundModel.findByIdAndUpdate(id, {
-        active: false,
-      });
+      // ! only NEW accepted
+      const statusCheck = await this.findInboundStatus(id);
+      if (statusCheck !== Status.NEW) {
+        throw new BadRequestException('Only new accepted');
+      }
+      return this.inboundModel.findByIdAndUpdate(
+        id,
+        {
+          active: false,
+        },
+        {
+          new: true,
+        },
+      );
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
+  }
+
+  async findInboundStatus(id: string): Promise<string> {
+    const inbound = await this.inboundModel.findById(id);
+    return inbound.status;
   }
 }

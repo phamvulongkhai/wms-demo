@@ -17,7 +17,7 @@ export class ItemsService {
   ) {}
 
   async create(createItemDto: CreateItemDto): Promise<ItemDocument> {
-    const newCreateItemDto = plainToInstance(
+    const newCreateItemDto: CreateItemDto = plainToInstance(
       CreateItemDto,
       createItemDto,
       options,
@@ -32,7 +32,7 @@ export class ItemsService {
   async findByOption(
     findingOptionItemDto: FindingOptionItemDto,
   ): Promise<ItemDocument[]> {
-    const newFindingOptionDto = plainToInstance(
+    const newFindingOptionDto: FindingOptionItemDto = plainToInstance(
       FindingOptionItemDto,
       findingOptionItemDto,
       options,
@@ -54,7 +54,7 @@ export class ItemsService {
     id: string,
     updateItemDto: UpdateItemDto,
   ): Promise<ItemDocument> {
-    const newUpdateItemDto = plainToInstance(
+    const newUpdateItemDto: UpdateItemDto = plainToInstance(
       UpdateItemDto,
       updateItemDto,
       options,
@@ -64,6 +64,9 @@ export class ItemsService {
         { _id: id, active: activeOption },
         {
           items: newUpdateItemDto,
+        },
+        {
+          new: true,
         },
       );
     } catch (error) {
@@ -76,9 +79,15 @@ export class ItemsService {
   async softDelete(id: string): Promise<ItemDocument> {
     //  TODO: you need to validate if the item is on order or not.
     try {
-      return this.itemModel.findByIdAndUpdate(id, {
-        active: false,
-      });
+      return this.itemModel.findByIdAndUpdate(
+        id,
+        {
+          active: false,
+        },
+        {
+          new: true,
+        },
+      );
     } catch (error) {
       throw new BadRequestException('Bad request');
     }

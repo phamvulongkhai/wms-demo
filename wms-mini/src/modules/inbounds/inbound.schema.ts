@@ -15,7 +15,7 @@ export class Inbound {
   code: string;
 
   @Prop({
-    default: Status.New,
+    default: Status.NEW,
     enum: Status,
   })
   status: string;
