@@ -1,3 +1,3 @@
-import { BaseItemDto } from './create.update.item.dto';
+import { CreateUpdateItemDto } from './create.update.item.dto';
 
-export class CreateItemDto extends BaseItemDto {}
+export class CreateItemDto extends CreateUpdateItemDto {}

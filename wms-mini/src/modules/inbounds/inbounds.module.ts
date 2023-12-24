@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Inbound, InboundSchema } from './inbound.schema';
 import { InboundsController } from './inbounds.controller';
 import { InboundsService } from './inbounds.service';
+import { Inbound, InboundSchema } from './schemas/inbound.schema';
 
 @Module({
   imports: [

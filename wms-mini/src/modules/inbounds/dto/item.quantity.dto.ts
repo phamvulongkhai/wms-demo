@@ -6,6 +6,7 @@ import { isObjectId } from 'src/decorators/is.object.td.decorator';
 export class ItemQuantityDto {
   @ApiProperty()
   @isObjectId()
+  @IsNotEmpty()
   @IsString()
   @Expose()
   id: string;

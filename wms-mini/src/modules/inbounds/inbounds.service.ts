@@ -6,9 +6,9 @@ import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
-import { FilterPaginationInboundDto } from './dto/filter.paginatidto.inbound.dto/filter.pagination.inbound.dto';
+import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/filter.pagination.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
-import { Inbound, InboundDocument } from './inbound.schema';
+import { Inbound, InboundDocument } from './schemas/inbound.schema';
 
 @Injectable()
 export class InboundsService {
@@ -82,7 +82,6 @@ export class InboundsService {
 
   async softDelete(id: string): Promise<InboundDocument> {
     try {
-      // ! only NEW accepted
       const statusCheck = await this.findInboundStatus(id);
       if (statusCheck !== Status.NEW) {
         throw new BadRequestException('Only new accepted');

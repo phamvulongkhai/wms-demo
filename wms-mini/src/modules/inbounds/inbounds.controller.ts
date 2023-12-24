@@ -4,10 +4,10 @@ import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
-import { FilterPaginationInboundDto } from './dto/filter.paginatidto.inbound.dto/filter.pagination.inbound.dto';
+import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/filter.pagination.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
-import { InboundDocument } from './inbound.schema';
 import { InboundsService } from './inbounds.service';
+import { InboundDocument } from './schemas/inbound.schema';
 @ApiTags('Inbounds')
 @Controller('inbounds')
 export class InboundsController {
@@ -19,8 +19,6 @@ export class InboundsController {
   ): Promise<InboundDocument> {
     return await this.inboundsService.create(createInboundDto);
   }
-
-  // TODO: pagination
 
   @Post('search')
   async findByOption(
