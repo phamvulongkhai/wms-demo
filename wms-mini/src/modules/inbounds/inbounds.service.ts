@@ -4,25 +4,24 @@ import { Model, UpdateWriteOpResult } from 'mongoose';
 import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
+import { Item } from '../items/item.schema';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
 import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/filter.pagination.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
+import { InboundRepository } from './inbounds.repository';
 import { Inbound, InboundDocument } from './schemas/inbound.schema';
 
 @Injectable()
 export class InboundsService {
   constructor(
     @InjectModel(Inbound.name) private readonly inboundModel: Model<Inbound>,
+    @InjectModel(Item.name) private readonly itemModel: Model<Item>,
+    private readonly inboundRepository: InboundRepository,
   ) {}
 
-  //  TODO: You need to validate item id, and calculate inventory before save
   async create(createInboundDto: CreateInboundDto): Promise<InboundDocument> {
-    try {
-      return await this.inboundModel.create(createInboundDto);
-    } catch (error) {
-      throw new BadRequestException('Bad request');
-    }
+    return await this.inboundRepository.create(createInboundDto);
   }
 
   async findByOption(

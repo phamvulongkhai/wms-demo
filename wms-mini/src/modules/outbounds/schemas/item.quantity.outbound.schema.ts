@@ -1,4 +1,3 @@
-export class ItemQuantityOutbound {
-  id: string;
-  quantity: number;
-}
+import { ItemQuantity } from 'src/common/item.quantity';
+
+export class ItemQuantityOutbound extends ItemQuantity {}

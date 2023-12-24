@@ -31,7 +31,6 @@ export class ItemsController {
     return await this.itemsService.updateInbound(id, updateItem);
   }
 
-  // TODO: you cannot delete item if items exist in any order.
   @Delete(':id')
   async softDelete(
     @Param('id', new IsObjectIdPipe()) id: string,
