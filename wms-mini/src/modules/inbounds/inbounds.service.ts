@@ -96,7 +96,7 @@ export class InboundsService {
         },
       );
     } catch (error) {
-      throw new BadRequestException('Bad request');
+      throw new BadRequestException(error.message);
     }
   }
 

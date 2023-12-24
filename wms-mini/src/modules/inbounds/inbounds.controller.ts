@@ -42,9 +42,9 @@ export class InboundsController {
   @Put('update/:id')
   async updateInbound(
     @Param('id', new IsObjectIdPipe()) id: string,
-    @Body() updateInbound: UpdateInboundDto,
+    @Body() updateInboundDto: UpdateInboundDto,
   ) {
-    return await this.inboundsService.updateInbound(id, updateInbound);
+    return await this.inboundsService.updateInbound(id, updateInboundDto);
   }
 
   @Delete(':id')

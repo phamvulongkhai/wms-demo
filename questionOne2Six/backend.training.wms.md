@@ -67,6 +67,7 @@
 
 - Công thức tính tồn kho: Sẽ dựa vào số lượng sản phẩm được thêm vào các đơn hàng
 
+  - Khải: Chỉ từ NEW > CANCEL or COMPLETED. Không thể làm ngược lại.
   - Tồn kho sản phẩm (Quantity) = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED + tổng đơn nhập NEW
   - Tồn kho khả dụng sản phẩm (Quantity) = Tổng đơn hàng nhập với status COMPLETED - tổng đơn xuất COMPLETED - tổng đơn xuất NEW
 
