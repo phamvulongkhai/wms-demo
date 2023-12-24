@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { plainToInstance } from 'class-transformer';
 import { Model } from 'mongoose';
 import activeOption from 'src/config/active.config';
-import { options } from 'src/config/plain.config';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
-import { CreateItemDto } from './dto/create.update.item.dto.ts/create.item.dto';
-import { UpdateItemDto } from './dto/create.update.item.dto.ts/update.item.dto';
-import { FindingOptionItemDto } from './dto/finding.option.item.dto';
+import { CreateItemDto } from './dto/create.update.item.dto/create.item.dto';
+import { UpdateItemDto } from './dto/create.update.item.dto/update.item.dto';
+import { FilterPaginationDto } from './dto/filter.pagination.dto/filter.pagination.dto';
 import { Item, ItemDocument } from './item.schema';
 
 @Injectable()
@@ -17,32 +15,25 @@ export class ItemsService {
   ) {}
 
   async create(createItemDto: CreateItemDto): Promise<ItemDocument> {
-    const newCreateItemDto: CreateItemDto = plainToInstance(
-      CreateItemDto,
-      createItemDto,
-      options,
-    );
     try {
-      return await this.itemModel.create(newCreateItemDto);
+      return await this.itemModel.create(createItemDto);
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
   }
 
   async findByOption(
-    findingOptionItemDto: FindingOptionItemDto,
+    filterPaginationDto: FilterPaginationDto,
   ): Promise<ItemDocument[]> {
-    const newFindingOptionDto: FindingOptionItemDto = plainToInstance(
-      FindingOptionItemDto,
-      findingOptionItemDto,
-      options,
-    );
+    const { filter, pagination }: FilterPaginationDto = filterPaginationDto;
     try {
       return await this.itemModel
         .find({
-          ...newFindingOptionDto,
+          ...filter,
           active: activeOption,
         })
+        .limit(pagination.perPage)
+        .skip(pagination.perPage * pagination.page)
         .exec();
     } catch (error) {
       throw new BadRequestException('Bad request');
@@ -54,16 +45,11 @@ export class ItemsService {
     id: string,
     updateItemDto: UpdateItemDto,
   ): Promise<ItemDocument> {
-    const newUpdateItemDto: UpdateItemDto = plainToInstance(
-      UpdateItemDto,
-      updateItemDto,
-      options,
-    );
     try {
       return this.itemModel.findOneAndUpdate(
         { _id: id, active: activeOption },
         {
-          items: newUpdateItemDto,
+          items: updateItemDto,
         },
         {
           new: true,
@@ -73,8 +59,6 @@ export class ItemsService {
       throw new BadRequestException('Bad request');
     }
   }
-
-  // TODO: pagination
 
   async softDelete(id: string): Promise<ItemDocument> {
     //  TODO: you need to validate if the item is on order or not.

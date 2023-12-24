@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { plainToInstance } from 'class-transformer';
 import { Model, UpdateWriteOpResult } from 'mongoose';
 import activeOption from 'src/config/active.config';
-import { options } from 'src/config/plain.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
-import { CreateInboundDto } from './dto/create.update.inbound.dto.ts/create.inbound.dto';
-import { UpdateInboundDto } from './dto/create.update.inbound.dto.ts/update.inbound.dto';
+import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
+import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
 import { FindingOptionInboundDto } from './dto/finding.option.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
 import { Inbound, InboundDocument } from './inbound.schema';
@@ -20,13 +18,8 @@ export class InboundsService {
 
   //  TODO: You need to validate item id, and calculate inventory before save
   async create(createInboundDto: CreateInboundDto): Promise<InboundDocument> {
-    const newCreateInboundDto: CreateInboundDto = plainToInstance(
-      CreateInboundDto,
-      createInboundDto,
-      options,
-    );
     try {
-      return await this.inboundModel.create(newCreateInboundDto);
+      return await this.inboundModel.create(createInboundDto);
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
@@ -35,16 +28,11 @@ export class InboundsService {
   async findByOption(
     findingOptionInboundDto: FindingOptionInboundDto,
   ): Promise<InboundDocument[]> {
-    const newFindingOptionInboundDto: FindingOptionInboundDto = plainToInstance(
-      FindingOptionInboundDto,
-      findingOptionInboundDto,
-      options,
-    );
     try {
       return await this.inboundModel
         .find({
           active: activeOption,
-          ...newFindingOptionInboundDto,
+          ...findingOptionInboundDto,
         })
         .exec();
     } catch (error) {
@@ -76,16 +64,11 @@ export class InboundsService {
     id: string,
     updateInboundDto: UpdateInboundDto,
   ): Promise<InboundDocument> {
-    const newUpdateInboundDto: UpdateInboundDto = plainToInstance(
-      UpdateInboundDto,
-      updateInboundDto,
-      options,
-    );
     try {
       return this.inboundModel.findOneAndUpdate(
         { _id: id, active: activeOption },
         {
-          items: newUpdateInboundDto,
+          items: updateInboundDto,
         },
       );
     } catch (error) {

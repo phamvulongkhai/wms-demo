@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
-import { CreateItemDto } from './dto/create.update.item.dto.ts/create.item.dto';
-import { UpdateItemDto } from './dto/create.update.item.dto.ts/update.item.dto';
-import { FindingOptionItemDto } from './dto/finding.option.item.dto';
+import { CreateItemDto } from './dto/create.update.item.dto/create.item.dto';
+import { UpdateItemDto } from './dto/create.update.item.dto/update.item.dto';
+import { FilterPaginationDto } from './dto/filter.pagination.dto/filter.pagination.dto';
 import { ItemDocument } from './item.schema';
 import { ItemsService } from './items.service';
 @ApiTags('Items')
@@ -16,13 +16,11 @@ export class ItemsController {
     return await this.itemsService.create(createItemDto);
   }
 
-  // TODO: pagination
-
   @Post('search')
   async findByOption(
-    @Body() findingOptionItemDto: FindingOptionItemDto,
+    @Body() filterPaginationDto: FilterPaginationDto,
   ): Promise<ItemDocument[]> {
-    return await this.itemsService.findByOption(findingOptionItemDto);
+    return await this.itemsService.findByOption(filterPaginationDto);
   }
 
   @Put('update/:id')
