@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Status } from 'src/enums/status.enum';
-import { ItemQuantity } from 'src/modules/inbounds/dto/item.quantity.type';
+import { ItemQuantityDto } from 'src/modules/inbounds/dto/item.quantity.dto';
 import getCode from 'src/utils/random.code.util';
 
 export type InboundDocument = HydratedDocument<Inbound>;
@@ -23,7 +23,7 @@ export class Inbound {
   @Prop({
     default: [],
   })
-  items: ItemQuantity[];
+  items: ItemQuantityDto[];
 
   @Prop({
     default: true,

@@ -4,7 +4,7 @@ import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
-import { FindingOptionInboundDto } from './dto/finding.option.inbound.dto';
+import { FilterPaginationInboundDto } from './dto/filter.paginatidto.inbound.dto/filter.pagination.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
 import { InboundDocument } from './inbound.schema';
 import { InboundsService } from './inbounds.service';
@@ -24,9 +24,9 @@ export class InboundsController {
 
   @Post('search')
   async findByOption(
-    @Body() findingOptionInboundDto: FindingOptionInboundDto,
+    @Body() filterPaginationInboundDto: FilterPaginationInboundDto,
   ): Promise<InboundDocument[]> {
-    return await this.inboundsService.findByOption(findingOptionInboundDto);
+    return await this.inboundsService.findByOption(filterPaginationInboundDto);
   }
 
   // ! Only New accepted

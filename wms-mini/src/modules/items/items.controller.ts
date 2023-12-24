@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateItemDto } from './dto/create.update.item.dto/create.item.dto';
 import { UpdateItemDto } from './dto/create.update.item.dto/update.item.dto';
-import { FilterPaginationDto } from './dto/filter.pagination.dto/filter.pagination.dto';
+import { FilterPaginationItemDto } from './dto/filter.pagination.item.dto/filter.pagination.item.dto';
 import { ItemDocument } from './item.schema';
 import { ItemsService } from './items.service';
 @ApiTags('Items')
@@ -18,9 +18,9 @@ export class ItemsController {
 
   @Post('search')
   async findByOption(
-    @Body() filterPaginationDto: FilterPaginationDto,
+    @Body() filterPaginationItemDto: FilterPaginationItemDto,
   ): Promise<ItemDocument[]> {
-    return await this.itemsService.findByOption(filterPaginationDto);
+    return await this.itemsService.findByOption(filterPaginationItemDto);
   }
 
   @Put('update/:id')

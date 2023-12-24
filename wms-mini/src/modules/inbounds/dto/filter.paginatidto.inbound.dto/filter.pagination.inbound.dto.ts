@@ -1,25 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsObject, ValidateNested } from 'class-validator';
-import { FilterItemDto } from './filter.dto';
-import { PaginationItemDto } from './pagination.dto';
+import { FilterInboundDto } from './filter.inbound.dto';
+import { PaginationInboundDto } from './pagination.inbound.dto';
 
-export class FilterPaginationDto {
-  @Type(() => FilterItemDto)
+export class FilterPaginationInboundDto {
+  @Type(() => FilterInboundDto)
   @ValidateNested({
     each: true,
   })
   @ApiProperty()
   @IsObject()
   @Expose()
-  filter: FilterItemDto;
+  filter: FilterInboundDto;
 
-  @Type(() => PaginationItemDto)
+  @Type(() => PaginationInboundDto)
   @ValidateNested({
     each: true,
   })
   @ApiProperty()
   @IsObject()
   @Expose()
-  pagination: PaginationItemDto;
+  pagination: PaginationInboundDto;
 }

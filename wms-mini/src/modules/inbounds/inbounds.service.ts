@@ -6,7 +6,7 @@ import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
-import { FindingOptionInboundDto } from './dto/finding.option.inbound.dto';
+import { FilterPaginationInboundDto } from './dto/filter.paginatidto.inbound.dto/filter.pagination.inbound.dto';
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
 import { Inbound, InboundDocument } from './inbound.schema';
 
@@ -26,14 +26,18 @@ export class InboundsService {
   }
 
   async findByOption(
-    findingOptionInboundDto: FindingOptionInboundDto,
+    filterPaginationInboundDto: FilterPaginationInboundDto,
   ): Promise<InboundDocument[]> {
+    const { filter, pagination }: FilterPaginationInboundDto =
+      filterPaginationInboundDto;
     try {
       return await this.inboundModel
         .find({
           active: activeOption,
-          ...findingOptionInboundDto,
+          ...filter,
         })
+        .limit(pagination.perPage)
+        .skip(pagination.perPage * pagination.page)
         .exec();
     } catch (error) {
       throw new BadRequestException('Bad request');

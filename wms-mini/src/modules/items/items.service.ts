@@ -5,7 +5,7 @@ import activeOption from 'src/config/active.config';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { CreateItemDto } from './dto/create.update.item.dto/create.item.dto';
 import { UpdateItemDto } from './dto/create.update.item.dto/update.item.dto';
-import { FilterPaginationDto } from './dto/filter.pagination.dto/filter.pagination.dto';
+import { FilterPaginationItemDto } from './dto/filter.pagination.item.dto/filter.pagination.item.dto';
 import { Item, ItemDocument } from './item.schema';
 
 @Injectable()
@@ -23,14 +23,15 @@ export class ItemsService {
   }
 
   async findByOption(
-    filterPaginationDto: FilterPaginationDto,
+    filterPaginationItemDto: FilterPaginationItemDto,
   ): Promise<ItemDocument[]> {
-    const { filter, pagination }: FilterPaginationDto = filterPaginationDto;
+    const { filter, pagination }: FilterPaginationItemDto =
+      filterPaginationItemDto;
     try {
       return await this.itemModel
         .find({
-          ...filter,
           active: activeOption,
+          ...filter,
         })
         .limit(pagination.perPage)
         .skip(pagination.perPage * pagination.page)

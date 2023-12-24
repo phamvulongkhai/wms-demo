@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Status } from 'src/enums/status.enum';
 
-export class FindingOptionInboundDto {
+export class FilterInboundDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsOptional()
