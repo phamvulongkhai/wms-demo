@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { InboundsModule } from './inbounds/inbounds.module';
 import { ItemsModule } from './items/items.module';
-import { OuntboundsService } from './outbounds/ountbounds.service';
+import { OutboundsModule } from './outbounds/outbounds.module';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { OuntboundsService } from './outbounds/ountbounds.service';
     MongooseModule.forRoot(process.env.URI),
     ItemsModule,
     InboundsModule,
+    OutboundsModule,
   ],
-  providers: [OuntboundsService],
 })
 export class AppModule {}

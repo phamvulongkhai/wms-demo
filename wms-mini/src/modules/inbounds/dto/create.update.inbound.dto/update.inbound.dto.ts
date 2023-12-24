@@ -1,3 +1,3 @@
-import { BaseInboundDto } from './create.update.inbound.dto';
+import { CreateUpdateInboundDto } from './create.update.inbound.dto';
 
-export class UpdateInboundDto extends BaseInboundDto {}
+export class UpdateInboundDto extends CreateUpdateInboundDto {}

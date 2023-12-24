@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
-import { ItemQuantityInboundDto } from '../item.quantity.inbound.dto';
+import { ItemQuantityOutboundDto } from '../item.quantity.outbound.dto';
 
-export class CreateUpdateInboundDto {
+export class CreateUpdateOutBoundDto {
   @Expose()
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
   @ValidateNested({ each: true })
-  @Type(() => ItemQuantityInboundDto)
-  items: ItemQuantityInboundDto[];
+  @Type(() => ItemQuantityOutboundDto)
+  items: ItemQuantityOutboundDto[];
 }
