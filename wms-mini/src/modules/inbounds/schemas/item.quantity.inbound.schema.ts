@@ -1,4 +1,4 @@
-export class ItemQuantity {
+export class ItemQuantityInbound {
   id: string;
   quantity: number;
 }

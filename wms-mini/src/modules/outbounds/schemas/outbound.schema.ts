@@ -2,15 +2,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Status } from 'src/enums/status.enum';
 import getCode from 'src/utils/random.code.util';
-import { ItemQuantityInbound } from './item.quantity.inbound.schema';
+import { ItemQuantityOutbound } from './item.quantity.outbound.schema';
 
-export type InboundDocument = HydratedDocument<Inbound>;
+export type OutboundDocument = HydratedDocument<Outbound>;
 @Schema({
   timestamps: true,
 })
-export class Inbound {
+export class Outbound {
   @Prop({
-    default: `IB${getCode()}`,
+    default: `OB${getCode()}`,
     unique: true,
   })
   code: string;
@@ -24,7 +24,7 @@ export class Inbound {
   @Prop({
     default: [],
   })
-  items: ItemQuantityInbound[];
+  items: ItemQuantityOutbound[];
 
   @Prop({
     default: true,
@@ -32,4 +32,4 @@ export class Inbound {
   active: boolean;
 }
 
-export const InboundSchema = SchemaFactory.createForClass(Inbound);
+export const OutboundSchema = SchemaFactory.createForClass(Outbound);
