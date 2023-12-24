@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { OutboundsService } from './ountbounds.service';
 import { OutboundsController } from './outbounds.controller';
+import { OutboundsService } from './outbounds.service';
 import { Outbound, OutboundSchema } from './schemas/outbound.schema';
 
 @Module({

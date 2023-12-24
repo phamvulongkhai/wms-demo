@@ -1,3 +1,3 @@
 import { CreateUpdateOutBoundDto } from './create.update.outbound.dto';
 
-export class createOutboundDto extends CreateUpdateOutBoundDto {}
+export class CreateOutboundDto extends CreateUpdateOutBoundDto {}
