@@ -27,7 +27,6 @@ export class InboundsController {
     return await this.inboundsService.findByOption(filterPaginationInboundDto);
   }
 
-  // ! Only New accepted
   @Put(':id')
   async updateInboundStatus(
     @Param('id', new IsObjectIdPipe()) id: string,

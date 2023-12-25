@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateWriteOpResult } from 'mongoose';
-import { ItemQuantity } from 'src/common/item.quantity';
 import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
-import { Item } from '../items/item.schema';
+import { ItemsRepository } from '../items/items.repository';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
 import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/filter.pagination.inbound.dto';
@@ -16,7 +15,7 @@ import { Inbound, InboundDocument } from './schemas/inbound.schema';
 export class InboundRepository {
   constructor(
     @InjectModel(Inbound.name) private readonly inboundModel: Model<Inbound>,
-    @InjectModel(Item.name) private readonly itemModel: Model<Item>,
+    @Inject(ItemsRepository) private readonly itemsRepository: ItemsRepository,
   ) {}
 
   // create new inbound order
@@ -24,8 +23,7 @@ export class InboundRepository {
     const { items }: CreateInboundDto = createInboundDto;
 
     try {
-      await this.isIdDtoMatchesIdDb(items);
-
+      await this.itemsRepository.isIdDtoMatchesIdDb(items);
       // create new inbound order
       return await this.inboundModel.create(createInboundDto);
     } catch (error) {
@@ -59,9 +57,8 @@ export class InboundRepository {
     const statusChange: string = updateStatusInboundDto.status;
 
     try {
-      // Check NEW status from db
       const inbound = await this.findInboundById(id);
-
+      // Check NEW status from db
       if (inbound.status !== Status.NEW)
         throw new BadRequestException('Only NEW accepted');
 
@@ -98,7 +95,7 @@ export class InboundRepository {
       if (inbound.status !== Status.NEW)
         throw new BadRequestException('Only new accepted');
 
-      // Update inbound in the end
+      // Delete
       return this.inboundModel.findByIdAndUpdate(
         id,
         {
@@ -108,28 +105,6 @@ export class InboundRepository {
           new: true,
         },
       );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  // check if id in dto matches id in database
-  private async isIdDtoMatchesIdDb(
-    itemQuantity: ItemQuantity[],
-  ): Promise<void> {
-    const IdDto: string[] = itemQuantity.map((item) => {
-      return item.id;
-    });
-    try {
-      const IdDb = await this.itemModel
-        .find({
-          active: activeOption,
-        })
-        .where('_id')
-        .in(IdDto)
-        .exec();
-      if (IdDto.length !== IdDb.length)
-        throw new BadRequestException('Invalid item id');
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -23,12 +23,19 @@ export class ItemsController {
     return await this.itemsService.findByOption(filterPaginationItemDto);
   }
 
+  // @Get('inventory/:id')
+  // async getInventory(
+  //   @Param('id', new IsObjectIdPipe()) id: string,
+  // ): Promise<InventoryDto> {
+  //   return await this.itemsService.getInventory(id);
+  // }
+
   @Put('update/:id')
   async updateItem(
     @Param('id', new IsObjectIdPipe()) id: string,
     @Body() updateItem: UpdateItemDto,
   ) {
-    return await this.itemsService.updateInbound(id, updateItem);
+    return await this.itemsService.updateItem(id, updateItem);
   }
 
   @Delete(':id')

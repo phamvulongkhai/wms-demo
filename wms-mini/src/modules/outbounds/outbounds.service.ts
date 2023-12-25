@@ -15,7 +15,6 @@ export class OutboundsService {
     private readonly outboundRepository: OutboundRepository,
   ) {}
 
-  //  TODO: You need to validate item id, and calculate inventory before save
   async create(
     createOutboundDto: CreateOutboundDto,
   ): Promise<OutboundDocument> {

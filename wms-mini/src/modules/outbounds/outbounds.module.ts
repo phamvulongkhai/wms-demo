@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Item, ItemSchema } from '../items/item.schema';
+import { ItemsModule } from '../items/items.module';
 import { OutboundsController } from './outbounds.controller';
 import { OutboundRepository } from './outbounds.repository';
 import { OutboundsService } from './outbounds.service';
@@ -13,11 +13,8 @@ import { Outbound, OutboundSchema } from './schemas/outbound.schema';
         name: Outbound.name,
         schema: OutboundSchema,
       },
-      {
-        name: Item.name,
-        schema: ItemSchema,
-      },
     ]),
+    ItemsModule,
   ],
   controllers: [OutboundsController],
   providers: [OutboundsService, OutboundRepository],
