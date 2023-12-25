@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateWriteOpResult } from 'mongoose';
-import activeOption from 'src/config/active.config';
-import { Status } from 'src/enums/status.enum';
-import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { Item } from '../items/item.schema';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
@@ -27,80 +24,30 @@ export class InboundsService {
   async findByOption(
     filterPaginationInboundDto: FilterPaginationInboundDto,
   ): Promise<InboundDocument[]> {
-    const { filter, pagination }: FilterPaginationInboundDto =
-      filterPaginationInboundDto;
-    try {
-      return await this.inboundModel
-        .find({
-          active: activeOption,
-          ...filter,
-        })
-        .limit(pagination.perPage)
-        .skip(pagination.perPage * pagination.page)
-        .exec();
-    } catch (error) {
-      throw new BadRequestException('Bad request');
-    }
+    return await this.inboundRepository.findByOption(
+      filterPaginationInboundDto,
+    );
   }
 
   async updateInboundStatus(
     id: string,
     updateStatusInboundDto: UpdateStatusInboundDto,
   ): Promise<UpdateWriteOpResult> {
-    const statusChange: string = updateStatusInboundDto.status;
-    try {
-      const statusCheck = await this.findInboundStatus(id);
-      if (statusCheck !== Status.NEW) {
-        throw new BadRequestException('Only new accepted');
-      }
-      return await this.inboundModel.findOneAndUpdate(
-        { _id: id, active: activeOption },
-        { status: statusChange },
-        { new: true },
-      );
-    } catch (error) {
-      throw new BadRequestException('Bad request');
-    }
+    return await this.inboundRepository.updateInboundStatus(
+      id,
+      updateStatusInboundDto,
+    );
   }
 
   async updateInbound(
     id: string,
     updateInboundDto: UpdateInboundDto,
   ): Promise<InboundDocument> {
-    try {
-      return this.inboundModel.findOneAndUpdate(
-        { _id: id, active: activeOption },
-        {
-          items: updateInboundDto,
-        },
-      );
-    } catch (error) {
-      throw new BadRequestException('Bad request');
-    }
+    return await this.inboundRepository.updateInbound(id, updateInboundDto);
   }
 
+  // Only NEW status can delete
   async softDelete(id: string): Promise<InboundDocument> {
-    try {
-      const statusCheck = await this.findInboundStatus(id);
-      if (statusCheck !== Status.NEW) {
-        throw new BadRequestException('Only new accepted');
-      }
-      return this.inboundModel.findByIdAndUpdate(
-        id,
-        {
-          active: false,
-        },
-        {
-          new: true,
-        },
-      );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async findInboundStatus(id: string): Promise<string> {
-    const inbound = await this.inboundModel.findById(id);
-    return inbound.status;
+    return await this.inboundRepository.softDelete(id);
   }
 }

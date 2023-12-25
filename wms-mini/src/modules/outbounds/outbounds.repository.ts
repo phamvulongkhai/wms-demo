@@ -6,40 +6,41 @@ import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { Item } from '../items/item.schema';
-import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
-import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
-import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/filter.pagination.inbound.dto';
-import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
-import { Inbound, InboundDocument } from './schemas/inbound.schema';
+import { CreateOutboundDto } from './dto/create.update.outbound.dto/create.outbound.dto';
+import { UpdateOutboundDto } from './dto/create.update.outbound.dto/update.outbound.dto';
+import { FilterPaginationOutboundDto } from './dto/filter.pagination.outbound.dto/filter.pagination.outbound.dto';
+import { UpdateStatusOutboundDto } from './dto/update.status.outbound.dto';
+import { Outbound, OutboundDocument } from './schemas/outbound.schema';
 
 @Injectable()
-export class InboundRepository {
+export class OutboundRepository {
   constructor(
-    @InjectModel(Inbound.name) private readonly inboundModel: Model<Inbound>,
+    @InjectModel(Outbound.name) private readonly outboundModel: Model<Outbound>,
     @InjectModel(Item.name) private readonly itemModel: Model<Item>,
   ) {}
 
-  // create new inbound order
-  async create(createInboundDto: CreateInboundDto): Promise<InboundDocument> {
-    const { items }: CreateInboundDto = createInboundDto;
-
+  // create new outbound order
+  async create(
+    createOutboundDto: CreateOutboundDto,
+  ): Promise<OutboundDocument> {
+    const { items }: CreateOutboundDto = createOutboundDto;
     try {
       await this.isIdDtoMatchesIdDb(items);
 
-      // create new inbound order
-      return await this.inboundModel.create(createInboundDto);
+      // create new outbound order
+      return await this.outboundModel.create(createOutboundDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   async findByOption(
-    filterPaginationInboundDto: FilterPaginationInboundDto,
-  ): Promise<InboundDocument[]> {
-    const { filter, pagination }: FilterPaginationInboundDto =
-      filterPaginationInboundDto;
+    filterPaginationOutboundDto: FilterPaginationOutboundDto,
+  ): Promise<OutboundDocument[]> {
+    const { filter, pagination }: FilterPaginationOutboundDto =
+      filterPaginationOutboundDto;
     try {
-      return await this.inboundModel
+      return await this.outboundModel
         .find({
           active: activeOption,
           ...filter,
@@ -54,19 +55,19 @@ export class InboundRepository {
 
   async updateInboundStatus(
     id: string,
-    updateStatusInboundDto: UpdateStatusInboundDto,
+    updateStatusOutboundDto: UpdateStatusOutboundDto,
   ): Promise<UpdateWriteOpResult> {
-    const statusChange: string = updateStatusInboundDto.status;
+    const statusChange: string = updateStatusOutboundDto.status;
 
     try {
       // Check NEW status from db
-      const inbound = await this.findInboundById(id);
+      const outbound = await this.findOutboundById(id);
 
-      if (inbound.status !== Status.NEW)
+      if (outbound.status !== Status.NEW)
         throw new BadRequestException('Only NEW accepted');
 
       // Update status in the end
-      return await this.inboundModel.findOneAndUpdate(
+      return await this.outboundModel.findOneAndUpdate(
         { _id: id, active: activeOption },
         { status: statusChange },
         { new: true },
@@ -76,15 +77,15 @@ export class InboundRepository {
     }
   }
 
-  async updateInbound(
+  async updateOutbound(
     id: string,
-    updateInboundDto: UpdateInboundDto,
-  ): Promise<InboundDocument> {
+    updateOutboundDto: UpdateOutboundDto,
+  ): Promise<OutboundDocument> {
     try {
-      return this.inboundModel.findOneAndUpdate(
+      return this.outboundModel.findOneAndUpdate(
         { _id: id, active: activeOption },
         {
-          items: updateInboundDto,
+          items: updateOutboundDto,
         },
       );
     } catch (error) {
@@ -92,14 +93,12 @@ export class InboundRepository {
     }
   }
 
-  async softDelete(id: string): Promise<InboundDocument> {
+  async softDelete(id: string): Promise<OutboundDocument> {
     try {
-      const inbound = await this.findInboundById(id);
-      if (inbound.status !== Status.NEW)
+      const outbound = await this.findOutboundById(id);
+      if (outbound.status !== Status.NEW)
         throw new BadRequestException('Only new accepted');
-
-      // Update inbound in the end
-      return this.inboundModel.findByIdAndUpdate(
+      return this.outboundModel.findByIdAndUpdate(
         id,
         {
           active: false,
@@ -135,11 +134,11 @@ export class InboundRepository {
     }
   }
 
-  private async findInboundById(id: string): Promise<InboundDocument> {
+  private async findOutboundById(id: string): Promise<OutboundDocument> {
     try {
-      const inbound = await this.inboundModel.findById(id);
-      if (!inbound) throw new BadRequestException('Invalid inbound order id');
-      return inbound;
+      const outbound = await this.outboundModel.findById(id);
+      if (!outbound) throw new BadRequestException('Invalid outbound order id');
+      return outbound;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
