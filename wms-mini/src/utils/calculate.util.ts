@@ -45,15 +45,15 @@ export function isListAvailableInventoryPositive(
 ): void {
   items.map((item) => {
     const result = calculateAvailableInventory(inputs, item.id);
-    if (!isGteZero(result))
+    if (!isGtZero(result))
       throw new BadRequestException(
         `Available inventory of the ${item.id} is insufficient`,
       );
   });
 }
 
-function isGteZero(n: number): boolean {
-  return n >= 0 ? true : false;
+function isGtZero(n: number): boolean {
+  return n > 0 ? true : false;
 }
 
 function calculateItemQuantity(items: ItemQuantity[], id: string): number {
