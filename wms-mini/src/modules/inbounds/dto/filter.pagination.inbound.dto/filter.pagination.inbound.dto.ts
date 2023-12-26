@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsObject, ValidateNested } from 'class-validator';
 import { FilterInboundDto } from './filter.inbound.dto';
 import { PaginationInboundDto } from './pagination.inbound.dto';
@@ -11,7 +11,6 @@ export class FilterPaginationInboundDto {
   })
   @ApiProperty()
   @IsObject()
-  @Expose()
   filter: FilterInboundDto;
 
   @Type(() => PaginationInboundDto)
@@ -20,6 +19,5 @@ export class FilterPaginationInboundDto {
   })
   @ApiProperty()
   @IsObject()
-  @Expose()
   pagination: PaginationInboundDto;
 }

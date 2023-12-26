@@ -1,30 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateWriteOpResult } from 'mongoose';
+import { UpdateWriteOpResult } from 'mongoose';
 import { CreateOutboundDto } from './dto/create.update.outbound.dto/create.outbound.dto';
 import { UpdateOutboundDto } from './dto/create.update.outbound.dto/update.outbound.dto';
 import { FilterPaginationOutboundDto } from './dto/filter.pagination.outbound.dto/filter.pagination.outbound.dto';
 import { UpdateStatusOutboundDto } from './dto/update.status.outbound.dto';
-import { OutboundRepository } from './outbounds.repository';
-import { Outbound, OutboundDocument } from './schemas/outbound.schema';
+import { OutboundsRepository } from './outbounds.repository';
+import { OutboundDocument } from './schemas/outbound.schema';
 
 @Injectable()
 export class OutboundsService {
-  constructor(
-    @InjectModel(Outbound.name) private readonly outboundModel: Model<Outbound>,
-    private readonly outboundRepository: OutboundRepository,
-  ) {}
+  constructor(private readonly outboundsRepository: OutboundsRepository) {}
 
   async create(
     createOutboundDto: CreateOutboundDto,
   ): Promise<OutboundDocument> {
-    return await this.outboundRepository.create(createOutboundDto);
+    return await this.outboundsRepository.create(createOutboundDto);
   }
 
   async findByOption(
     filterPaginationOutboundDto: FilterPaginationOutboundDto,
   ): Promise<OutboundDocument[]> {
-    return await this.outboundRepository.findByOption(
+    return await this.outboundsRepository.findByOption(
       filterPaginationOutboundDto,
     );
   }
@@ -33,7 +29,7 @@ export class OutboundsService {
     id: string,
     updateStatusOutboundDto: UpdateStatusOutboundDto,
   ): Promise<UpdateWriteOpResult> {
-    return await this.outboundRepository.updateInboundStatus(
+    return await this.outboundsRepository.updateInboundStatus(
       id,
       updateStatusOutboundDto,
     );
@@ -43,10 +39,10 @@ export class OutboundsService {
     id: string,
     updateOutboundDto: UpdateOutboundDto,
   ): Promise<OutboundDocument> {
-    return this.outboundRepository.updateOutbound(id, updateOutboundDto);
+    return this.outboundsRepository.updateOutbound(id, updateOutboundDto);
   }
 
   async softDelete(id: string): Promise<OutboundDocument> {
-    return this.outboundRepository.softDelete(id);
+    return this.outboundsRepository.softDelete(id);
   }
 }

@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class PaginationOutboundDto {
@@ -7,7 +6,6 @@ export class PaginationOutboundDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @Expose()
   @IsInt()
   perPage: number;
 
@@ -15,7 +13,6 @@ export class PaginationOutboundDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @Expose()
   @IsInt()
   page: number;
 }

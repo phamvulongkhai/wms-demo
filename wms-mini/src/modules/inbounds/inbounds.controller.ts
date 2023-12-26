@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
@@ -8,6 +8,7 @@ import { FilterPaginationInboundDto } from './dto/filter.pagination.inbound.dto/
 import { UpdateStatusInboundDto } from './dto/update.status.inbound.dto';
 import { InboundsService } from './inbounds.service';
 import { InboundDocument } from './schemas/inbound.schema';
+@ApiBearerAuth()
 @ApiTags('Inbounds')
 @Controller('inbounds')
 export class InboundsController {

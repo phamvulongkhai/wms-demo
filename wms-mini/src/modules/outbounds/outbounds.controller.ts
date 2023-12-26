@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateOutboundDto } from './dto/create.update.outbound.dto/create.outbound.dto';
@@ -9,6 +9,7 @@ import { UpdateStatusOutboundDto } from './dto/update.status.outbound.dto';
 import { OutboundsService } from './outbounds.service';
 import { OutboundDocument } from './schemas/outbound.schema';
 
+@ApiBearerAuth()
 @ApiTags('Outbounds')
 @Controller('outbounds')
 export class OutboundsController {

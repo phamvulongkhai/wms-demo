@@ -14,7 +14,7 @@ import { UpdateStatusOutboundDto } from './dto/update.status.outbound.dto';
 import { Outbound, OutboundDocument } from './schemas/outbound.schema';
 
 @Injectable()
-export class OutboundRepository {
+export class OutboundsRepository {
   constructor(
     @InjectModel(Outbound.name) private readonly outboundModel: Model<Outbound>,
     @Inject(ItemsRepository) private readonly itemsRepository: ItemsRepository,
