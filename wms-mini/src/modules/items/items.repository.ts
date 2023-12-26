@@ -8,7 +8,10 @@ import { BadRequestException } from 'src/exceptions/bad.request.exception';
 import { MapItemsAndInventory } from 'src/types/map.items.and.inventory';
 import { ResponseAvailableInventoryType } from 'src/types/response.available.inventory.type';
 import { ResponseInventoryType } from 'src/types/response.inventory.type';
-import { calculateListInventory } from 'src/utils/calculate.util';
+import {
+  calculateListAvailableInventory,
+  calculateListInventory,
+} from 'src/utils/calculate.util';
 import { Inbound } from '../inbounds/schemas/inbound.schema';
 import { Item, ItemDocument } from '../items/item.schema';
 import { Outbound } from '../outbounds/schemas/outbound.schema';
@@ -57,7 +60,7 @@ export class ItemsRepository {
       ]);
 
       const listInventory: number[] = calculateListInventory(items, inventory);
-      const listAvailableInventory: number[] = calculateListInventory(
+      const listAvailableInventory: number[] = calculateListAvailableInventory(
         items,
         availableInventory,
       );
@@ -75,25 +78,29 @@ export class ItemsRepository {
     id: string,
     updateItemDto: UpdateItemDto,
   ): Promise<ItemDocument> {
+    const { sku, name } = updateItemDto;
     try {
-      return this.itemModel.findOneAndUpdate(
+      const result = await this.itemModel.findOneAndUpdate(
         { _id: id, active: activeOption },
         {
-          items: updateItemDto,
+          sku: sku,
+          name: name,
         },
         {
           new: true,
         },
       );
+      if (!result) throw new BadRequestException('Item not found');
+      return result;
     } catch (error) {
-      throw new BadRequestException('Bad request');
+      throw new BadRequestException(error.message);
     }
   }
 
   async softDelete(id: string): Promise<ItemDocument> {
     try {
       await this.isItemInOrder(id);
-      return await this.itemModel.findByIdAndUpdate(
+      const result = await this.itemModel.findByIdAndUpdate(
         id,
         {
           active: false,
@@ -102,8 +109,10 @@ export class ItemsRepository {
           new: true,
         },
       );
+      if (!result) throw new BadRequestException('Item not found');
+      return result;
     } catch (error) {
-      throw new BadRequestException('Bad request');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -198,9 +207,8 @@ export class ItemsRepository {
 
     orders.flat(2).map((order) => {
       order.items.map((item) => {
-        if (item.id === id) {
+        if (item.id === id)
           throw new BadRequestException('This item has been ordered');
-        }
       });
     });
   }

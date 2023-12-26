@@ -25,12 +25,12 @@ export class OutboundRepository {
   ): Promise<OutboundDocument> {
     const { items }: CreateOutboundDto = createOutboundDto;
     try {
+      await this.itemsRepository.isIdDtoMatchesIdDb(items);
+
       const availableInventory: ResponseAvailableInventoryType =
         await this.itemsRepository.getAllToCalculateAvailableInventory();
 
       isListAvailableInventoryPositive(availableInventory, items);
-
-      await this.itemsRepository.isIdDtoMatchesIdDb(items);
 
       // create new outbound order
       return await this.outboundModel.create(createOutboundDto);

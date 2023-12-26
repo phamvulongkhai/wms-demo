@@ -39,21 +39,31 @@ export function calculateAvailableInventory(
   return a - b - c;
 }
 
+export function calculateListAvailableInventory(
+  items: ItemDocument[],
+  inputs: ResponseInventoryType,
+) {
+  return items.map((item) => {
+    return calculateAvailableInventory(inputs, item.id);
+  });
+}
+
 export function isListAvailableInventoryPositive(
   inputs: ResponseAvailableInventoryType,
   items: ItemQuantity[],
 ): void {
   items.map((item) => {
-    const result = calculateAvailableInventory(inputs, item.id);
-    if (!isGtZero(result))
+    const availableInventory: number = calculateAvailableInventory(
+      inputs,
+      item.id,
+    );
+    const itemQuantity: number = calculateItemQuantity(items, item.id);
+
+    if (itemQuantity > availableInventory)
       throw new BadRequestException(
         `Available inventory of the ${item.id} is insufficient`,
       );
   });
-}
-
-function isGtZero(n: number): boolean {
-  return n > 0 ? true : false;
 }
 
 function calculateItemQuantity(items: ItemQuantity[], id: string): number {
