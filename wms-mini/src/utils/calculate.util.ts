@@ -1,9 +1,11 @@
-import { InboundDocument } from 'src/modules/inbounds/schemas/inbound.schema';
-import { OutboundDocument } from 'src/modules/outbounds/schemas/outbound.schema';
+import { BadRequestException } from 'src/exceptions/bad.request.exception';
+import { ItemDocument } from 'src/modules/items/item.schema';
+import { ResponseAvailableInventoryType } from 'src/types/response.available.inventory.type';
+import { ResponseInventoryType } from 'src/types/response.inventory.type';
 import { ItemQuantity } from './../common/item.quantity';
 
 export function calculateInventory(
-  inputs: [InboundDocument[], OutboundDocument[], InboundDocument[]],
+  inputs: ResponseInventoryType,
   id: string,
 ): number {
   const [a, b, c] = inputs.map((input) => {
@@ -15,7 +17,42 @@ export function calculateInventory(
   return a - b + c;
 }
 
-export function isGteZero(n: number): boolean {
+export function calculateListInventory(
+  items: ItemDocument[],
+  inputs: ResponseInventoryType,
+) {
+  return items.map((item) => {
+    return calculateInventory(inputs, item.id);
+  });
+}
+
+export function calculateAvailableInventory(
+  inputs: ResponseAvailableInventoryType,
+  id: string,
+): number {
+  const [a, b, c] = inputs.map((input) => {
+    const results = input.flatMap((i) => {
+      return i.items;
+    });
+    return calculateItemQuantity(results, id);
+  });
+  return a - b - c;
+}
+
+export function isListAvailableInventoryPositive(
+  inputs: ResponseAvailableInventoryType,
+  items: ItemQuantity[],
+): void {
+  items.map((item) => {
+    const result = calculateAvailableInventory(inputs, item.id);
+    if (!isGteZero(result))
+      throw new BadRequestException(
+        `Available inventory of the ${item.id} is insufficient`,
+      );
+  });
+}
+
+function isGteZero(n: number): boolean {
   return n >= 0 ? true : false;
 }
 

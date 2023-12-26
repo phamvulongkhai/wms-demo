@@ -5,7 +5,10 @@ import { ItemQuantity } from 'src/common/item.quantity';
 import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
-import { calculateInventory } from 'src/utils/calculate.util';
+import { MapItemsAndInventory } from 'src/types/map.items.and.inventory';
+import { ResponseAvailableInventoryType } from 'src/types/response.available.inventory.type';
+import { ResponseInventoryType } from 'src/types/response.inventory.type';
+import { calculateListInventory } from 'src/utils/calculate.util';
 import { Inbound } from '../inbounds/schemas/inbound.schema';
 import { Item, ItemDocument } from '../items/item.schema';
 import { Outbound } from '../outbounds/schemas/outbound.schema';
@@ -31,11 +34,11 @@ export class ItemsRepository {
 
   async findByOption(
     filterPaginationItemDto: FilterPaginationItemDto,
-  ): Promise<ItemDocument[]> {
+  ): Promise<MapItemsAndInventory[]> {
     const { filter, pagination }: FilterPaginationItemDto =
       filterPaginationItemDto;
     try {
-      return await this.itemModel
+      const items: ItemDocument[] = await this.itemModel
         .find({
           active: activeOption,
           ...filter,
@@ -43,19 +46,24 @@ export class ItemsRepository {
         .limit(pagination.perPage)
         .skip(pagination.perPage * pagination.page)
         .exec();
+
+      const inventory = await this.getAllToCalculateInventory();
+      const listInventory: number[] = calculateListInventory(items, inventory);
+      const availableInventory =
+        await this.getAllToCalculateAvailableInventory();
+      const listAvailableInventory: number[] = calculateListInventory(
+        items,
+        availableInventory,
+      );
+      return this.mapItemInventoryAInventory(
+        items,
+        listInventory,
+        listAvailableInventory,
+      );
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
   }
-
-  // TODO: get item inventory
-  //   async getInventory(: string): Promise<InventoryDto> {
-  //     try {
-  //        getAllToCalculateInventory
-  //     } catch (error) {
-  //       throw new BadRequestException('Bad request');
-  //     }
-  //   }
 
   async updateItem(
     id: string,
@@ -93,7 +101,7 @@ export class ItemsRepository {
     }
   }
 
-  private async getAllToCalculateInventory(id: string): Promise<any> {
+  async getAllToCalculateAvailableInventory(): Promise<ResponseAvailableInventoryType> {
     try {
       const filter: object = {
         active: activeOption,
@@ -101,19 +109,20 @@ export class ItemsRepository {
       };
       const inboundsCompleted = this.inboundModel.find(filter);
       const outboundsCompleted = this.outboundModel.find(filter);
-      const inboundsNew = this.inboundModel.find({
+      const outboundsNew = this.outboundModel.find({
         ...filter,
         status: Status.NEW,
       });
       const results = await Promise.all([
         inboundsCompleted,
         outboundsCompleted,
-        inboundsNew,
+        outboundsNew,
       ]);
 
-      // TODO: util function here
-      calculateInventory(results, id);
-    } catch (error) {}
+      return results;
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
   }
 
   // check if id in dto matches id in database
@@ -136,5 +145,43 @@ export class ItemsRepository {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  private async getAllToCalculateInventory(): Promise<ResponseInventoryType> {
+    try {
+      const filter: object = {
+        active: activeOption,
+        status: Status.COMPLETED,
+      };
+      const inboundsCompleted = this.inboundModel.find(filter);
+      const outboundsCompleted = this.outboundModel.find(filter);
+      const inboundsNew = this.inboundModel.find({
+        ...filter,
+        status: Status.NEW,
+      });
+      const results = await Promise.all([
+        inboundsCompleted,
+        outboundsCompleted,
+        inboundsNew,
+      ]);
+
+      return results;
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
+  private mapItemInventoryAInventory(
+    items: ItemDocument[],
+    listInventory: number[],
+    listAvailableInventory: number[],
+  ): MapItemsAndInventory[] {
+    return items.map((item, index) => {
+      return {
+        ...item.toObject(),
+        inventory: listInventory[index],
+        availableInventory: listAvailableInventory[index],
+      } as MapItemsAndInventory;
+    });
   }
 }

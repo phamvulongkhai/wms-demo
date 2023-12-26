@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
+import { MapItemsAndInventory } from 'src/types/map.items.and.inventory';
 import { CreateItemDto } from './dto/create.update.item.dto/create.item.dto';
 import { UpdateItemDto } from './dto/create.update.item.dto/update.item.dto';
 import { FilterPaginationItemDto } from './dto/filter.pagination.item.dto/filter.pagination.item.dto';
@@ -19,16 +20,9 @@ export class ItemsController {
   @Post('search')
   async findByOption(
     @Body() filterPaginationItemDto: FilterPaginationItemDto,
-  ): Promise<ItemDocument[]> {
+  ): Promise<MapItemsAndInventory[]> {
     return await this.itemsService.findByOption(filterPaginationItemDto);
   }
-
-  // @Get('inventory/:id')
-  // async getInventory(
-  //   @Param('id', new IsObjectIdPipe()) id: string,
-  // ): Promise<InventoryDto> {
-  //   return await this.itemsService.getInventory(id);
-  // }
 
   @Put('update/:id')
   async updateItem(

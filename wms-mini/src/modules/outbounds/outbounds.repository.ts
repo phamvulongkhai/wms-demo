@@ -4,6 +4,8 @@ import { Model, UpdateWriteOpResult } from 'mongoose';
 import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
+import { ResponseAvailableInventoryType } from 'src/types/response.available.inventory.type';
+import { isListAvailableInventoryPositive } from 'src/utils/calculate.util';
 import { ItemsRepository } from '../items/items.repository';
 import { CreateOutboundDto } from './dto/create.update.outbound.dto/create.outbound.dto';
 import { UpdateOutboundDto } from './dto/create.update.outbound.dto/update.outbound.dto';
@@ -18,12 +20,16 @@ export class OutboundRepository {
     @Inject(ItemsRepository) private readonly itemsRepository: ItemsRepository,
   ) {}
 
-  // TODO: validate available inventory before create outbound
   async create(
     createOutboundDto: CreateOutboundDto,
   ): Promise<OutboundDocument> {
     const { items }: CreateOutboundDto = createOutboundDto;
     try {
+      const availableInventory: ResponseAvailableInventoryType =
+        await this.itemsRepository.getAllToCalculateAvailableInventory();
+
+      isListAvailableInventoryPositive(availableInventory, items);
+
       await this.itemsRepository.isIdDtoMatchesIdDb(items);
 
       // create new outbound order
