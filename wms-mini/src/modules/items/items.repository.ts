@@ -38,7 +38,7 @@ export class ItemsRepository {
     const { filter, pagination }: FilterPaginationItemDto =
       filterPaginationItemDto;
     try {
-      const items: ItemDocument[] = await this.itemModel
+      const promiseOne = this.itemModel
         .find({
           active: activeOption,
           ...filter,
@@ -47,10 +47,16 @@ export class ItemsRepository {
         .skip(pagination.perPage * pagination.page)
         .exec();
 
-      const inventory = await this.getAllToCalculateInventory();
+      const promiseTwo = this.getAllToCalculateInventory();
+      const promiseThree = this.getAllToCalculateAvailableInventory();
+
+      const [items, inventory, availableInventory] = await Promise.all([
+        promiseOne,
+        promiseTwo,
+        promiseThree,
+      ]);
+
       const listInventory: number[] = calculateListInventory(items, inventory);
-      const availableInventory =
-        await this.getAllToCalculateAvailableInventory();
       const listAvailableInventory: number[] = calculateListInventory(
         items,
         availableInventory,
@@ -85,9 +91,9 @@ export class ItemsRepository {
   }
 
   async softDelete(id: string): Promise<ItemDocument> {
-    //  TODO: you need to validate if the item is on order or not.
     try {
-      return this.itemModel.findByIdAndUpdate(
+      await this.isItemInOrder(id);
+      return await this.itemModel.findByIdAndUpdate(
         id,
         {
           active: false,
@@ -113,13 +119,11 @@ export class ItemsRepository {
         ...filter,
         status: Status.NEW,
       });
-      const results = await Promise.all([
+      return await Promise.all([
         inboundsCompleted,
         outboundsCompleted,
         outboundsNew,
       ]);
-
-      return results;
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
@@ -159,13 +163,11 @@ export class ItemsRepository {
         ...filter,
         status: Status.NEW,
       });
-      const results = await Promise.all([
+      return await Promise.all([
         inboundsCompleted,
         outboundsCompleted,
         inboundsNew,
       ]);
-
-      return results;
     } catch (error) {
       throw new BadRequestException('Bad request');
     }
@@ -182,6 +184,24 @@ export class ItemsRepository {
         inventory: listInventory[index],
         availableInventory: listAvailableInventory[index],
       } as MapItemsAndInventory;
+    });
+  }
+
+  private async isItemInOrder(id: string) {
+    const filter: object = {
+      active: activeOption,
+    };
+    const promiseOne = this.inboundModel.find(filter);
+    const promiseTwo = this.outboundModel.find(filter);
+
+    const orders = await Promise.all([promiseOne, promiseTwo]);
+
+    orders.flat(2).map((order) => {
+      order.items.map((item) => {
+        if (item.id === id) {
+          throw new BadRequestException('This item has been ordered');
+        }
+      });
     });
   }
 }
