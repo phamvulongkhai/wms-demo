@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { UpdateWriteOpResult } from 'mongoose';
 import { IsObjectIdPipe } from 'src/pipes/is.object.id.pipe';
 import { CreateInboundDto } from './dto/create.update.inbound.dto/create.inbound.dto';
 import { UpdateInboundDto } from './dto/create.update.inbound.dto/update.inbound.dto';
@@ -32,7 +31,7 @@ export class InboundsController {
   async updateInboundStatus(
     @Param('id', new IsObjectIdPipe()) id: string,
     @Body() updateStatusInboundDto: UpdateStatusInboundDto,
-  ): Promise<UpdateWriteOpResult> {
+  ): Promise<InboundDocument> {
     return await this.inboundsService.updateInboundStatus(
       id,
       updateStatusInboundDto,

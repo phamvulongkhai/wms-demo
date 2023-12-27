@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateWriteOpResult } from 'mongoose';
 import { CreateOutboundDto } from './dto/create.update.outbound.dto/create.outbound.dto';
 import { UpdateOutboundDto } from './dto/create.update.outbound.dto/update.outbound.dto';
 import { FilterPaginationOutboundDto } from './dto/filter.pagination.outbound.dto/filter.pagination.outbound.dto';
@@ -28,7 +27,7 @@ export class OutboundsService {
   async updateInboundStatus(
     id: string,
     updateStatusOutboundDto: UpdateStatusOutboundDto,
-  ): Promise<UpdateWriteOpResult> {
+  ): Promise<OutboundDocument> {
     return await this.outboundsRepository.updateInboundStatus(
       id,
       updateStatusOutboundDto,

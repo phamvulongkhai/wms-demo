@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateWriteOpResult } from 'mongoose';
+import { Model } from 'mongoose';
 import activeOption from 'src/config/active.config';
 import { Status } from 'src/enums/status.enum';
 import { BadRequestException } from 'src/exceptions/bad.request.exception';
@@ -61,22 +61,18 @@ export class OutboundsRepository {
   async updateInboundStatus(
     id: string,
     updateStatusOutboundDto: UpdateStatusOutboundDto,
-  ): Promise<UpdateWriteOpResult> {
+  ): Promise<OutboundDocument> {
     const statusChange: string = updateStatusOutboundDto.status;
-
     try {
-      // Check NEW status from db
-      const outbound = await this.findOutboundById(id);
-
-      if (outbound.status !== Status.NEW)
-        throw new BadRequestException('Only NEW accepted');
-
-      // Update status in the end
-      return await this.outboundModel.findOneAndUpdate(
-        { _id: id, active: activeOption },
+      const outbound = await this.outboundModel.findOneAndUpdate(
+        { _id: id, active: activeOption, status: Status.NEW },
         { status: statusChange },
         { new: true },
       );
+      if (!outbound) {
+        throw new BadRequestException('outbound not found or Invalid status');
+      }
+      return outbound;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -87,24 +83,30 @@ export class OutboundsRepository {
     updateOutboundDto: UpdateOutboundDto,
   ): Promise<OutboundDocument> {
     try {
-      return this.outboundModel.findOneAndUpdate(
-        { _id: id, active: activeOption },
+      const { items }: UpdateOutboundDto = updateOutboundDto;
+      await this.itemsRepository.isIdDtoMatchesIdDb(items);
+      const outbound = await this.outboundModel.findOneAndUpdate(
+        { _id: id, active: activeOption, status: Status.NEW },
         {
-          items: updateOutboundDto,
+          items: items,
+        },
+        {
+          new: true,
         },
       );
+      if (!outbound) {
+        throw new BadRequestException('Outbound not found');
+      }
+      return outbound;
     } catch (error) {
-      throw new BadRequestException('Bad request');
+      throw new BadRequestException(error.message);
     }
   }
 
   async softDelete(id: string): Promise<OutboundDocument> {
     try {
-      const outbound = await this.findOutboundById(id);
-      if (outbound.status !== Status.NEW)
-        throw new BadRequestException('Only new accepted');
-      return this.outboundModel.findByIdAndUpdate(
-        id,
+      const outbound = await this.outboundModel.findOneAndUpdate(
+        { _id: id, status: Status.NEW, active: activeOption },
         {
           active: false,
         },
@@ -112,15 +114,9 @@ export class OutboundsRepository {
           new: true,
         },
       );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  private async findOutboundById(id: string): Promise<OutboundDocument> {
-    try {
-      const outbound = await this.outboundModel.findById(id);
-      if (!outbound) throw new BadRequestException('Invalid outbound order id');
+      if (!outbound) {
+        throw new BadRequestException('Outbound not found');
+      }
       return outbound;
     } catch (error) {
       throw new BadRequestException(error.message);
